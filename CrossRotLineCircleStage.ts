@@ -72,3 +72,61 @@ class Animator {
         }
     }
 }
+
+class CRLCNode {
+    next : CRLCNode
+    prev : CRLCNode
+    state : State = new State()
+
+    constructor(private i : number) {
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < nodes - 1) {
+            this.next = new CRLCNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context : CanvasRenderingContext2D) {
+        const sk : number = 1 / factor
+        const gap : number = w / (nodes + 1)
+        context.save()
+        context.translate(gap * (this.i + 1), h/2)
+        context.beginPath()
+        context.arc(0, 0, gap/3, 0, 2 * Math.PI)
+        context.stroke()
+        for (var j = 0; j < factor - 1; j++) {
+            const sc : number = Math.min(sk, Math.max(0, this.state.scale - sk * j)) * factor
+            context.save()
+            context.rotate(Math.PI/2 * (j+1) * sc)
+            context.beginPath()
+            context.moveTo(0, 0)
+            context.lineTo(0, -gap/3)
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+
+    update(cb : Function) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb : Function) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir : number, cb : Function) : CRLCNode {
+        var curr : CRLCNode = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
