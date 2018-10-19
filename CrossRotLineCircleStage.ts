@@ -108,6 +108,9 @@ class CRLCNode {
             context.restore()
         }
         context.restore()
+        if (this.next) {
+            this.next.draw(context)
+        }
     }
 
     update(cb : Function) {
@@ -128,5 +131,31 @@ class CRLCNode {
         }
         cb()
         return this
+    }
+}
+
+class CrossRotLineCircle {
+    root : CRLCNode = new CRLCNode(0)
+    curr : CRLCNode = this.curr
+    dir : number = 1
+
+    draw(context : CanvasRenderingContext2D) {
+        context.strokeStyle = '#673AB7'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        this.root.draw(context)
+    }
+
+    update(cb : Function) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb : Function) {
+        this.curr.startUpdating(cb)
     }
 }
