@@ -159,3 +159,26 @@ class CrossRotLineCircle {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+    crlc : CrossRotLineCircle = new CrossRotLineCircle()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        context.fillStyle = '#BDBDBD'
+        context.fillRect(0, 0, w, h)
+        this.crlc.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.crlc.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.crlc.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
