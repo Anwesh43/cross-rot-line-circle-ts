@@ -99,15 +99,19 @@ class CRLCNode {
         context.beginPath()
         context.arc(0, 0, gap/3, 0, 2 * Math.PI)
         context.stroke()
-        for (var j = 0; j < factor - 1; j++) {
+        console.log(sk)
+        const deg : number = (2 * Math.PI) / (factor)
+        var orgDeg : number = 0
+        for (var j = 0; j < factor; j++) {
             const sc : number = Math.min(sk, Math.max(0, this.state.scale - sk * j)) * factor
             context.save()
-            context.rotate(Math.PI/2 * (j+1) * sc)
+            context.rotate(orgDeg + deg * sc)
             context.beginPath()
             context.moveTo(0, 0)
             context.lineTo(0, -gap/3)
             context.stroke()
             context.restore()
+            orgDeg += deg * sc
         }
         context.restore()
         if (this.next) {
@@ -138,7 +142,7 @@ class CRLCNode {
 
 class CrossRotLineCircle {
     root : CRLCNode = new CRLCNode(0)
-    curr : CRLCNode = this.curr
+    curr : CRLCNode = this.root
     dir : number = 1
 
     draw(context : CanvasRenderingContext2D) {
